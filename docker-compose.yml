@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile
     env_file: 
       - .env
+    environment:
+      ACME_DIRECTORY: https://acme-staging-v02.api.letsencrypt.org/directory
     ports:
       - 127.0.0.1:8080:8080
   

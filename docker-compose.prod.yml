@@ -5,18 +5,20 @@ services:
       context: .
       dockerfile: Dockerfile
     env_file: 
-      - .prod.env
+      - .env
+    environment:
+      ACME_DIRECTORY: https://acme-v02.api.letsencrypt.org/directory
     ports:
       - 127.0.0.1:8080:8080
   
   postgres:
     image: postgres:latest
     env_file:
-      - .prod.env
+      - .env
     environment:
       PGDATA: /var/lib/postgresql/data/db
     volumes:
       - pg-db:/var/lib/postgresql/data
 
 volumes:
-  hcc_db:
+  pg-db:

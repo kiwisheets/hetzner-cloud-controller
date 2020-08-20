@@ -69,7 +69,7 @@ func main() {
 
 	certConfig := lego.NewConfig(&certUser)
 
-	certConfig.CADirURL = "https://acme-staging-v02.api.letsencrypt.org/directory"
+	certConfig.CADirURL = goenv.MustGet("ACME_DIRECTORY")
 
 	lClient, err := lego.NewClient(certConfig)
 
