@@ -56,6 +56,7 @@ func loadbalancerCreateEndpoint(hClient *hcloud.Client, db *gorm.DB) func(c *gin
 		name := c.PostForm("name")
 		typeString := c.PostForm("type")
 		domains := c.PostFormArray("domain_names")
+		destinationPortString := c.PostForm("destination_port")
 
 		if name == "" {
 			c.JSON(http.StatusBadRequest, jsonError{
@@ -70,6 +71,21 @@ func loadbalancerCreateEndpoint(hClient *hcloud.Client, db *gorm.DB) func(c *gin
 			})
 			return
 		}
+
+		var destinationPort int
+		if destinationPortString == "" {
+			destinationPort = 80
+		}
+		portTemp, err := (strconv.ParseInt(destinationPortString, 10, strconv.IntSize))
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, jsonError{
+				Error: "destination_port not an int",
+			})
+			return
+		}
+
+		destinationPort = int(portTemp)
 
 		typeID, err := strconv.ParseInt(typeString, 10, strconv.IntSize)
 
@@ -114,7 +130,7 @@ func loadbalancerCreateEndpoint(hClient *hcloud.Client, db *gorm.DB) func(c *gin
 				{
 					Protocol:        hcloud.LoadBalancerServiceProtocolHTTPS,
 					ListenPort:      hcloud.Int(443),
-					DestinationPort: hcloud.Int(80),
+					DestinationPort: hcloud.Int(destinationPort),
 					HTTP: &hcloud.LoadBalancerCreateOptsServiceHTTP{
 						CookieName:     hcloud.String("HCLBSTICKY"),
 						CookieLifetime: hcloud.Duration(300 * time.Second),
@@ -136,6 +152,14 @@ func loadbalancerCreateEndpoint(hClient *hcloud.Client, db *gorm.DB) func(c *gin
 						Timeout:  hcloud.Duration(10 * time.Second),
 					},
 					Proxyprotocol: hcloud.Bool(false),
+				},
+			},
+			Targets: []hcloud.LoadBalancerCreateOptsTarget{
+				{
+					Type: hcloud.LoadBalancerTargetTypeLabelSelector,
+					LabelSelector: hcloud.LoadBalancerCreateOptsTargetLabelSelector{
+						Selector: "ingress=true",
+					},
 				},
 			},
 			PublicInterface: hcloud.Bool(true),

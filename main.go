@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/elliptic"
@@ -35,13 +34,6 @@ func main() {
 
 	if hClient == nil {
 		log.Fatalf("Failed to connect to Hetzner, check your API key")
-	}
-
-	// ensure dummy certificate exists
-	_, _, err := hClient.Certificate.GetByName(context.Background(), goenv.MustGet("DUMMY_CERT_NANE"))
-	if err != nil {
-		// add certificate
-
 	}
 
 	var userKey model.PrivateKey

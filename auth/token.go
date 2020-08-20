@@ -14,7 +14,7 @@ type UserClaim struct {
 	jwt.StandardClaims
 }
 
-func validateTokenAndGetUserID(t string, jwtSecret string) (hide.ID, error) {
+func ValidateTokenAndGetUserID(t string, jwtSecret string) (hide.ID, error) {
 	token, err := jwt.ParseWithClaims(t, &UserClaim{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtSecret), nil
 	})
