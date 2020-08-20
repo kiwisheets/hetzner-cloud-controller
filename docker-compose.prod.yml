@@ -1,0 +1,33 @@
+version: '3.3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: 
+      - .env
+    ports:
+      - 8080:8080
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 3072M
+  
+  postgres:
+    image: postgres:latest
+    env_file:
+      .env
+    environment:
+      PGDATA: /var/lib/postgresql/data/db
+    volumes:
+      - pg-db:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 3072M
+
+volumes:
+  hcc_db:
+    external: true

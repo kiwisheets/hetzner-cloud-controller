@@ -1,0 +1,33 @@
+version: '3.3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: 
+      - .env
+    ports:
+      - 8080:8080
+  
+  postgres:
+    image: postgres:latest
+    env_file:
+      .env
+    environment:
+      PGDATA: /var/lib/postgresql/data/db
+    volumes:
+      - pg-db:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: pgadmin
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - "8081:80"
+
+volumes:
+  pg-db:
+  pgadmin:
